@@ -8,6 +8,7 @@ from shared.models import Base
 load_dotenv()
 
 DB_PATH = os.getenv("DB_PATH", "./data/anon.db")
+os.makedirs(os.path.dirname(os.path.abspath(DB_PATH)) or ".", exist_ok=True)
 DATABASE_URL = f"sqlite+aiosqlite:///{DB_PATH}"
 
 engine = create_async_engine(DATABASE_URL, echo=False)
