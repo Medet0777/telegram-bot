@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Хабарлама #{{ msg.id }}{% endblock %}
+{% block content %}
+<a href="/" class="back">← Барлық хабарламалар</a>
+
+<div class="card">
+  <div class="meta">
+    <span>#{{ msg.id }}</span>
+    <span>{{ msg.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+    <span>Санат: <b>{{ cat_labels.get(msg.category, msg.category) }}</b></span>
+    <span>Сессия: <code>{{ session.id }}</code></span>
+    {% if msg.ai_flagged %}<span class="flagged-label">🚨 ДАҒДАРЫС БЕЛГІСІ</span>{% endif %}
+  </div>
+
+  <div class="content-box">{{ msg.content }}</div>
+
+  <form method="post" action="/msg/{{ msg.id }}/status" class="status-form">
+    <label>Статусты өзгерту</label>
+    <select name="new_status">
+      {% for s in statuses %}
+        <option value="{{ s.value }}" {% if msg.status == s.value %}selected{% endif %}>{{ status_labels[s] }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Сақтау</button>
+  </form>
+</div>
+
+<h2>Жауаптар</h2>
+{% for r in replies %}
+  <div class="reply">
+    <div class="reply-meta">{{ r.sent_at.strftime('%Y-%m-%d %H:%M') }}</div>
+    <div class="reply-body">{{ r.content }}</div>
+  </div>
+{% else %}
+  <p class="muted">Әлі жауап жоқ</p>
+{% endfor %}
+
+<form method="post" action="/msg/{{ msg.id }}/reply" class="reply-form">
+  <label>Анонимді жауап жазу</label>
+  <textarea name="reply_text" rows="4" placeholder="Жазуыңыз қолданушыға ботта жеткізіледі..." required></textarea>
+  <button type="submit">Жіберу</button>
+</form>
+{% endblock %}

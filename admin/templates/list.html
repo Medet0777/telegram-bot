@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Хабарламалар{% endblock %}
+{% block content %}
+<h1>Хабарламалар</h1>
+
+<div class="stats">
+  {% for s in statuses %}
+    <span class="stat stat-{{ s.value }}">{{ status_labels[s] }}: {{ counts.get(s.value, 0) }}</span>
+  {% endfor %}
+</div>
+
+<form method="get" class="filters">
+  <select name="status_filter" onchange="this.form.submit()">
+    <option value="">— Барлық статустар —</option>
+    {% for s in statuses %}
+      <option value="{{ s.value }}" {% if status_filter == s.value %}selected{% endif %}>{{ status_labels[s] }}</option>
+    {% endfor %}
+  </select>
+  <select name="category_filter" onchange="this.form.submit()">
+    <option value="">— Барлық санаттар —</option>
+    {% for c in categories %}
+      <option value="{{ c.value }}" {% if category_filter == c.value %}selected{% endif %}>{{ cat_labels[c] }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<table class="messages">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Уақыт</th>
+      <th>Санат</th>
+      <th>Мазмұн</th>
+      <th>Статус</th>
+      <th>⚠️</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for m in messages %}
+    <tr class="row {{ 'flagged' if m.ai_flagged else '' }}" onclick="window.location='/msg/{{ m.id }}'">
+      <td>{{ m.id }}</td>
+      <td>{{ m.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      <td>{{ cat_labels.get(m.category, m.category) }}</td>
+      <td class="preview">{{ m.content[:120] }}{% if m.content|length > 120 %}…{% endif %}</td>
+      <td><span class="badge badge-{{ m.status }}">{{ status_labels.get(m.status, m.status) }}</span></td>
+      <td>{% if m.ai_flagged %}🚨{% endif %}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6" class="empty">Әзірше хабарламалар жоқ</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

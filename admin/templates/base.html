@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Әкімші панелі{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a href="/" class="logo">🌸 Анонимді қолдау</a>
+      {% if request.session.get('user') %}
+        <nav>
+          <span class="user">{{ request.session.get('user') }}</span>
+          <a href="/logout">Шығу</a>
+        </nav>
+      {% endif %}
+    </div>
+  </header>
+  <main class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
